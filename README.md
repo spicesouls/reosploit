@@ -8,11 +8,18 @@
 
 ### ☑️ Features
 
+#### V 1.0.0
+
 * Scanning Networks for Reolink Devices.
 * Listening to Network Traffic for Reolink credentials and sessions.
 * Generating API Tokens from Credentials.
 * Enumerating the device for users, hardware information, firmware information, etc.
 * Taking a Photo through the Camera and saving it.
+
+##### V 1.1.0
+
+* Streaming Live Video
+* DOSing the Device's Video Feed & Web Page
 
 ### 🛠 Installation
 
@@ -26,7 +33,7 @@ sudo ./reosploit.py -h
 ### 📃 Usage
 
 ```
-sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, LISTEN, TOKEN, ENUMERATE, SNAP ]
+sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, LISTEN, TOKEN, ENUMERATE, SNAP, DOS, STREAM ]
 ```
 
 ### 📖 Examples
