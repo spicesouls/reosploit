@@ -2,3 +2,6 @@ requests
 colorama
 netaddr
 pyshark
+socket
+scapy
+opencv-python
