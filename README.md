@@ -1,4 +1,4 @@
-# 🕱📸🕱 ReoSploit - Version 1.0.0
+# 🕱📸🕱 ReoSploit - Version 1.1.0
 
 ### A Tool that Finds, Enumerates and Exploits Reolink Cameras.
 
