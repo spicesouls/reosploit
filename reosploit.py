@@ -266,12 +266,6 @@ else:
 	if "/" in args.ip:
 		info("Please use a single IP! E.g: 192.168.1.1")
 		sys.exit()
-	try:
-		ips = list(netaddr.IPNetwork(args.ip).iter_hosts())
-		info("Please use a single IP! E.g: 192.168.1.1")
-		sys.exit()
-	except:
-		pass
 try:
 	if args.action == 'scan':
 		scan()
