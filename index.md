@@ -1,4 +1,4 @@
-# 🕱📸🕱 ReoSploit - Version 1.1.0
+# 🕱📸🕱 ReoSploit - Version 1.2.0
 
 ### A Tool that Finds, Enumerates and Exploits Reolink Cameras.
 
@@ -22,6 +22,11 @@
 * Streaming Live Video
 * DOSing the Device's Video Feed & Web Page
 
+#### V 1.2.0
+
+* Toggling Infared Capabilities
+* Toggling Recording Capabilities
+
 ### 🛠 Installation
 
 ```sh
@@ -34,7 +39,7 @@ sudo ./reosploit.py -h
 ### 📃 Usage
 
 ```
-sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, LISTEN, TOKEN, ENUMERATE, SNAP ]
+sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, LISTEN, TOKEN, ENUMERATE, SNAP, DOS, STREAM ]
 ```
 
 ### 📖 Examples
