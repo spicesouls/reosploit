@@ -51,7 +51,6 @@ def setargs():
                 x.add_row(["Recording", "Toggle the Recording Capabilities", "Exploitation", f"{Fore.GREEN}Yes{Fore.RESET}"])
                 x.align = 'l'; x.set_style(DEFAULT)
                 print(x)
-
                 sys.exit()
 
 def info(message):
