@@ -61,4 +61,4 @@ BTC Donations: 1CQvmpRCDasK7YKyjsQTZPUobRygqt86t7
 
 **🚧! THIS IS FOR STRICTLY EDUCATIONAL PURPOSES, I AM NOT RESPONSIBLE FOR YOUR USE OF THIS !🚧**
 
-[License](LICENSE)
+[License](https://github.com/spicesouls/reosploit/LICENSE)
