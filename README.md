@@ -1,4 +1,4 @@
-# 🕱📸🕱 ReoSploit - Version 1.1.2
+# 🕱📸🕱 ReoSploit - Version 1.2.0
 
 ### A Tool that Finds, Enumerates and Exploits Reolink Cameras.
 
@@ -21,6 +21,11 @@
 
 * Streaming Live Video
 * DOSing the Device's Video Feed & Web Page
+
+#### V 1.2.0
+
+* Toggling Infared Capabilities
+* Toggling Recording Capabilities
 
 ### 🛠 Installation
 
