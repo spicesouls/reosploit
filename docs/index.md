@@ -1,37 +1,64 @@
-## Welcome to GitHub Pages
+# 🕱📸🕱 ReoSploit - Version 1.2.0
 
-You can use the [editor on GitHub](https://github.com/spicesouls/reosploit/edit/gh-pages/docs/index.md) to maintain and preview the content for your website in Markdown files.
+### A Tool that Finds, Enumerates and Exploits Reolink Cameras.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+![](reo_sploit.png)
 
-### Markdown
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### ☑️ Features
 
-```markdown
-Syntax highlighted code block
+#### V 1.0.0
 
-# Header 1
-## Header 2
-### Header 3
+* Scanning Networks for Reolink Devices.
+* Listening to Network Traffic for Reolink credentials and sessions.
+* Generating API Tokens from Credentials.
+* Enumerating the device for users, hardware information, firmware information, etc.
+* Taking a Photo through the Camera and saving it.
 
-- Bulleted
-- List
+##### V 1.1.0
 
-1. Numbered
-2. List
+* Streaming Live Video
+* DOSing the Device's Video Feed & Web Page
 
-**Bold** and _Italic_ and `Code` text
+#### V 1.2.0
 
-[Link](url) and ![Image](src)
+* Toggling Infared Capabilities
+* Toggling Recording Capabilities
+
+### 🛠 Installation
+
+```sh
+git clone https://github.com/spicesouls/reosploit
+cd reosploit && pip install -r requirements.txt
+chmod +x reosploit.py
+sudo ./reosploit.py -h
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### 📃 Usage
 
-### Jekyll Themes
+```
+sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, LISTEN, TOKEN, ENUMERATE, SNAP, DOS, STREAM ]
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/spicesouls/reosploit/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### 📖 Examples
 
-### Support or Contact
+#### Finding Local Reosploit Cameras
+`sudo ./reosploit.py 192.168.1.0/24 scan`
+#### Listening to Reolink Network Traffic
+`sudo ./reosploit.py 192.168.1.10 listen -i eth0`
+#### Generating an API Token with Credentials
+`sudo ./reosploit.py 192.168.1.10 token -u admin -p password`
+#### Enumerating the Device
+`sudo ./reosploit.py 192.168.1.10 enumerate -u admin -p password`
+#### Getting a Photo From the Camera
+`sudo ./reosploit.py 192.168.1.10 snap -u admin -p password`
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+My Blog: https://beyondrootsec.wordpress.com
+
+BTC Donations: 1CQvmpRCDasK7YKyjsQTZPUobRygqt86t7
+
+**🚧! THIS IS FOR STRICTLY EDUCATIONAL PURPOSES, I AM NOT RESPONSIBLE FOR YOUR USE OF THIS !🚧**
+
+[License](https://github.com/spicesouls/reosploit/LICENSE)
