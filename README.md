@@ -57,7 +57,7 @@ sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, 
 
 My Blog: https://beyondrootsec.wordpress.com
 
-BTC Donations: 1CQvmpRCDasK7YKyjsQTZPUobRygqt86t7
+BTC Donations: 1HiMzFt967Mj4oT1udtdBVfYX2sZ6Tqd2c
 
 **🚧! THIS IS FOR STRICTLY EDUCATIONAL PURPOSES, I AM NOT RESPONSIBLE FOR YOUR USE OF THIS !🚧**
 
