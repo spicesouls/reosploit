@@ -39,7 +39,7 @@ sudo ./reosploit.py -h
 ### 📃 Usage
 
 ```
-sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [ IP or IP RANGE ] [ SCAN, LISTEN, TOKEN, ENUMERATE, SNAP, DOS, STREAM ]
+sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [--ip IP or IP CIDR ] [--action ACTION ]
 ```
 
 ### 📖 Examples
