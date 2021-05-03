@@ -1,4 +1,4 @@
-# 🕱📸🕱 ReoSploit - Version 1.2.0
+# 🕱📸🕱 ReoSploit - Version 1.3.0
 
 ### A Tool that Finds, Enumerates and Exploits Reolink Cameras.
 
@@ -27,6 +27,12 @@
 * Toggling Infared Capabilities
 * Toggling Recording Capabilities
 
+#### V 1.3.0
+
+* Detect Reolink Version Running
+* Toggle FTP Capablities
+* Force Device to Fully Reboot
+
 ### 🛠 Installation
 
 ```sh
@@ -54,8 +60,6 @@ sudo ./reosploit.py [-h] [-u U] [-p P] [-i I] [-t T] [--ip IP or IP CIDR ] [--ac
 `sudo ./reosploit.py 192.168.1.10 enumerate -u admin -p password`
 #### Getting a Photo From the Camera
 `sudo ./reosploit.py 192.168.1.10 snap -u admin -p password`
-
-My Blog: https://beyondrootsec.wordpress.com
 
 **🚧! THIS IS FOR STRICTLY EDUCATIONAL PURPOSES, I AM NOT RESPONSIBLE FOR YOUR USE OF THIS !🚧**
 
