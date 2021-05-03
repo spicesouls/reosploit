@@ -17,7 +17,7 @@
 * Enumerating the device for users, hardware information, firmware information, etc.
 * Taking a Photo through the Camera and saving it.
 
-##### V 1.1.0
+#### V 1.1.0
 
 * Streaming Live Video
 * DOSing the Device's Video Feed & Web Page
