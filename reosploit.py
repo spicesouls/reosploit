@@ -388,8 +388,21 @@ banner = fr'''
    -+  {yellow}Reosploit v1.3.0{Fore.RESET}  +-
 --==[  {Fore.RED}{str(len(actionchoices))} Actions Loaded{Fore.RESET} ]==--
 --==[  {green}@SpicySoulsv{Fore.RESET}      ]==--
---==[  {cyan}Beyond Root Sec{Fore.RESET}   ]==--
+--==[  {cyan}spicesouls.net{Fore.RESET}    ]==--
 {Style.RESET_ALL}'''
+
+'''
+██████╗ ███████╗ ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗████████╗
+██╔══██╗██╔════╝██╔═══██╗██╔════╝██╔══██╗██║     ██╔═══██╗██║╚══██╔══╝
+██████╔╝█████╗  ██║   ██║███████╗██████╔╝██║     ██║   ██║██║   ██║
+██╔══██╗██╔══╝  ██║   ██║╚════██║██╔═══╝ ██║     ██║   ██║██║   ██║
+██║  ██║███████╗╚██████╔╝███████║██║     ███████╗╚██████╔╝██║   ██║
+╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝ ╚═╝   ╚═╝   
+   -+  Reosploit v1.3.0  +-
+--==[  ?? Actions Loaded ]==--
+--==[  @SpicySoulsv      ]==--
+--==[  spicesouls.net    ]==--
+'''
 
 print(banner)
 setargs()
